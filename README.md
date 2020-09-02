@@ -1,2 +1,2 @@
 # streamlink-twitch-web-gui
-Twitch.tv web browser for Streamlink
+Twitch.tv web gui for Streamlink
