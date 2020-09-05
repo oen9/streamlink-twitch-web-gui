@@ -5,6 +5,7 @@ val Ver = new {
 
   val logback = "1.2.3"
   val zio     = "1.0.1"
+  val http4s  = "0.21.7"
 }
 
 lazy val sharedSettings = Seq(
@@ -14,7 +15,8 @@ lazy val sharedSettings = Seq(
   organizationName := "oen9",
   name := "streamlink-twitch-web-gui",
   libraryDependencies ++= Seq(
-    ),
+    "org.typelevel" %% "cats-core" % "2.2.0" // 2.1.1?
+  ),
   scalacOptions ++= Seq(
     "-Xlint",
     "-unchecked",
@@ -43,12 +45,18 @@ lazy val jsSettings = Seq(
 
 lazy val jvmSettings = Seq(
   libraryDependencies ++= Seq(
-    "dev.zio"        %% "zio"               % Ver.zio,
-    "dev.zio"        %% "zio-interop-cats"  % "2.1.4.0",
-    "dev.zio"        %% "zio-logging-slf4j" % "0.4.0",
-    "ch.qos.logback" % "logback-classic"    % Ver.logback,
-    "dev.zio"        %% "zio-test"          % Ver.zio % Test,
-    "dev.zio"        %% "zio-test-sbt"      % Ver.zio % Test
+    "dev.zio"        %% "zio"                 % Ver.zio,
+    "dev.zio"        %% "zio-interop-cats"    % "2.1.4.0",
+    "dev.zio"        %% "zio-logging-slf4j"   % "0.4.0",
+    "ch.qos.logback" % "logback-classic"      % Ver.logback,
+    "org.http4s"     %% "http4s-blaze-server" % Ver.http4s,
+    "org.http4s"     %% "http4s-circe"        % Ver.http4s,
+    "org.http4s"     %% "http4s-dsl"          % Ver.http4s,
+    "org.http4s"     %% "http4s-blaze-client" % Ver.http4s
+  ),
+  libraryDependencies ++= Seq(
+    "dev.zio" %% "zio-test"     % Ver.zio % Test,
+    "dev.zio" %% "zio-test-sbt" % Ver.zio % Test
   ),
   testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
   target := baseDirectory.value / ".." / "target",
