@@ -1,7 +1,7 @@
 scalaVersion := "2.13.3"
 
 val Ver = new {
-  val slinky = "0.6.5"
+  val slinky = "0.6.6"
 
   val logback = "1.2.3"
   val zio     = "1.0.1"
@@ -33,10 +33,18 @@ lazy val sharedSettings = Seq(
 
 lazy val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "me.shadaj" %%% "slinky-web" % Ver.slinky
+    "me.shadaj" %%% "slinky-web"          % Ver.slinky,
+    "me.shadaj" %%% "slinky-react-router" % Ver.slinky,
+    "io.suzaku" %%% "diode"               % "1.1.13"
   ),
   npmDependencies in Compile ++= Seq(
-    ),
+    "react"            -> "16.13.1",
+    "react-dom"        -> "16.13.1",
+    "react-popper"     -> "1.3.7",
+    "react-router-dom" -> "5.2.0",
+    "bootstrap"        -> "4.5.2",
+    "jquery"           -> "3.5.1"
+  ),
   scalaJSUseMainModuleInitializer := true,
   version.in(webpack) := "4.44.1",
   webpackBundlingMode := BundlingMode.Application,
