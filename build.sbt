@@ -45,14 +45,15 @@ lazy val jsSettings = Seq(
 
 lazy val jvmSettings = Seq(
   libraryDependencies ++= Seq(
-    "dev.zio"        %% "zio"                 % Ver.zio,
-    "dev.zio"        %% "zio-interop-cats"    % "2.1.4.0",
-    "dev.zio"        %% "zio-logging-slf4j"   % "0.4.0",
-    "ch.qos.logback" % "logback-classic"      % Ver.logback,
-    "org.http4s"     %% "http4s-blaze-server" % Ver.http4s,
-    "org.http4s"     %% "http4s-circe"        % Ver.http4s,
-    "org.http4s"     %% "http4s-dsl"          % Ver.http4s,
-    "org.http4s"     %% "http4s-blaze-client" % Ver.http4s
+    "dev.zio"               %% "zio"                 % Ver.zio,
+    "dev.zio"               %% "zio-interop-cats"    % "2.1.4.0",
+    "dev.zio"               %% "zio-logging-slf4j"   % "0.4.0",
+    "com.github.pureconfig" %% "pureconfig"          % "0.13.0",
+    "ch.qos.logback"        % "logback-classic"      % Ver.logback,
+    "org.http4s"            %% "http4s-blaze-server" % Ver.http4s,
+    "org.http4s"            %% "http4s-circe"        % Ver.http4s,
+    "org.http4s"            %% "http4s-dsl"          % Ver.http4s,
+    "org.http4s"            %% "http4s-blaze-client" % Ver.http4s
   ),
   libraryDependencies ++= Seq(
     "dev.zio" %% "zio-test"     % Ver.zio % Test,
