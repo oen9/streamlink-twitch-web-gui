@@ -43,6 +43,7 @@ lazy val jsSettings = Seq(
     "react-popper"     -> "1.3.7",
     "react-router-dom" -> "5.2.0",
     "bootstrap"        -> "4.5.2",
+    "bootswatch"       -> "4.5.2",
     "jquery"           -> "3.5.1"
   ),
   scalaJSUseMainModuleInitializer := true,
@@ -91,6 +92,9 @@ lazy val appJVM = app.jvm
     mappings.in(Universal) ++= webpack.in(Compile, fullOptJS).in(appJS, Compile).value.map { f =>
       f.data -> s"assets/${f.data.getName()}"
     },
+    mappings.in(Universal) ++= Seq(
+      (target in (appJS, Compile)).value / ("scala-" + scalaBinaryVersion.value) / "scalajs-bundler" / "main" / "node_modules" / "bootswatch" / "dist" / "pulse" / "bootstrap.min.css" -> "assets/bootstrap.min.css"
+    ),
     bashScriptExtraDefines += """addJava "-Dassets=${app_home}/../assets""""
   )
 
