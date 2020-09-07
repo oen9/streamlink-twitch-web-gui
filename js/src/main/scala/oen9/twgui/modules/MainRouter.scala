@@ -17,14 +17,39 @@ import slinky.reactrouter.Switch
   }
 
   sealed trait MenuItemType
-  case class RegularMenuItem(idx: String, label: String, location: String) extends MenuItemType
+  case class RegularMenuItem(idx: String, label: String, location: String)          extends MenuItemType
+  case class MenuItemGroup(idx: String, label: String, items: Seq[RegularMenuItem]) extends MenuItemType
 
   object Loc {
     val home  = "/"
     val about = "/about"
   }
   val menuItems: Seq[MenuItemType] = Seq(
-    RegularMenuItem("100", "Home", Loc.home),
-    RegularMenuItem("1000", "About", Loc.about)
+    MenuItemGroup(
+      idx = "200",
+      label = "Browse",
+      items = Seq(
+        RegularMenuItem("201", "Featured", Loc.home),
+        RegularMenuItem("202", "Games", Loc.home),
+        RegularMenuItem("203", "Streams", Loc.home)
+      )
+    ),
+    MenuItemGroup(
+      idx = "300",
+      label = "Followed",
+      items = Seq(
+        RegularMenuItem("301", "Streams", Loc.home),
+        RegularMenuItem("302", "Channels", Loc.home)
+      )
+    ),
+    MenuItemGroup(
+      idx = "400",
+      label = "Misc",
+      items = Seq(
+        RegularMenuItem("401", "Home", Loc.home),
+        RegularMenuItem("402", "Settings", Loc.home),
+        RegularMenuItem("499", "About", Loc.about)
+      )
+    ),
   )
 }
