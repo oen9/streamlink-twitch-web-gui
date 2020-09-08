@@ -20,6 +20,7 @@ import slinky.web.html._
 
   def createMenuItemGroup(currentPath: String, idx: String, label: String, items: Seq[RegularMenuItem]): ReactElement =
     Fragment(
+      key := idx,
       li(h4(label)),
       items.map(item => createRegularMenuItem(item.idx, item.label, item.location))
     )
@@ -47,7 +48,7 @@ import slinky.web.html._
         ul(
           className := "navbar-nav mr-auto"
         ),
-        NavLink(exact = true, to = Loc.home)(
+        NavLink(exact = true, to = Loc.settings)(
           className := "btn btn-primary d-lg-inline-block",
           i(className := "fas fa-cog")
         )

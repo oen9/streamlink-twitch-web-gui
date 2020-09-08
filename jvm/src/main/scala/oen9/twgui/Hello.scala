@@ -41,8 +41,13 @@ object Hello extends App {
       catsBlocker = cats.effect.Blocker.liftExecutionContext(ec)
 
       httpApp = (
-        StaticEndpoints.routes[AppEnv](cfg.assets, catsBlocker)
-      ).orNotFound
+        StaticEndpoints
+          .routes[AppEnv](
+            cfg.assets,
+            catsBlocker
+          )
+        )
+        .orNotFound
 
       server <- ZIO.runtime[AppEnv].flatMap { implicit rts =>
         val ec = rts.platform.executor.asEC
