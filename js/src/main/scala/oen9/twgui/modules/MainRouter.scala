@@ -1,5 +1,7 @@
 package oen9.twgui.modules
 
+import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
 import slinky.core.FunctionalComponent
 import slinky.reactrouter.Route
@@ -19,7 +21,9 @@ import slinky.reactrouter.Switch
       Route(exact = true, path = Loc.followedStreams, component = FollowedStreams.component),
       Route(exact = true, path = Loc.followedChannels, component = FollowedChannels.component)
     )
-    Layout(routerSwitch)
+    ReactDiode.diodeContext.Provider(AppCircuit)(
+      Layout(routerSwitch)
+    )
   }
 
   sealed trait MenuItemType
