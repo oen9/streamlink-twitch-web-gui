@@ -40,6 +40,7 @@ import slinky.reactrouter.Switch
     val followedStreams  = "/followed-streams"
     val followedChannels = "/followed-channels"
   }
+
   val menuItems: Seq[MenuItemType] = Seq(
     MenuItemGroup(
       idx = "200",

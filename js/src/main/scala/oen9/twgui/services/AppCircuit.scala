@@ -1,14 +1,17 @@
 package oen9.twgui.services
 
-import diode.{Action, Circuit}
+import diode.Circuit
+import diode.data.Empty
+import diode.data.Pot
+import oen9.twgui.services.ajax.StreamsFollowedHandler
+import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.handlers.TwitchCredHandler
 
 case class TwitchCred(clientId: String = "", token: String = "")
 case class RootModel(
-  twitchCred: TwitchCred = TwitchCred()
+  twitchCred: TwitchCred = TwitchCred(),
+  streamsFollowed: Pot[StreamsFollowed] = Empty
 )
-
-case class SetTwitchCred(newCred: TwitchCred) extends Action
 
 object AppCircuit extends Circuit[RootModel] {
   override protected def initialModel: RootModel = {
@@ -17,6 +20,7 @@ object AppCircuit extends Circuit[RootModel] {
   }
 
   override protected def actionHandler: AppCircuit.HandlerFunction = composeHandlers(
-    new TwitchCredHandler(zoomTo(_.twitchCred))
+    new TwitchCredHandler(zoomTo(_.twitchCred)),
+    new StreamsFollowedHandler(zoomTo(_.streamsFollowed))
   )
 }

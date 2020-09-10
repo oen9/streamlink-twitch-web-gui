@@ -8,7 +8,7 @@ import slinky.web.html._
   type Props = Unit
   val component = FunctionalComponent[Props] { _ =>
     div(
-      "Games"
+      h1("Games")
     )
   }
 }

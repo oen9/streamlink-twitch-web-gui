@@ -1,8 +1,8 @@
 package oen9.twgui.modules
 
 import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.SetTwitchCred
 import oen9.twgui.services.ReactDiode
-import oen9.twgui.services.SetTwitchCred
 import oen9.twgui.services.TwitchCred
 import org.scalajs.dom.{html, Event}
 import slinky.core.annotations.react
@@ -66,7 +66,7 @@ import slinky.web.html._
       )
 
     div(
-      h1("settings"),
+      h1("Settings"),
       settingsForm()
     )
   }

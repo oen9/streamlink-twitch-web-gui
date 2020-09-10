@@ -1,6 +1,8 @@
 scalaVersion := "2.13.3"
 
 val Ver = new {
+  val circe = "0.13.0"
+
   val slinky = "0.6.6"
 
   val logback = "1.2.3"
@@ -15,7 +17,11 @@ lazy val sharedSettings = Seq(
   organizationName := "oen9",
   name := "streamlink-twitch-web-gui",
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core" % "2.2.0" // 2.1.1?
+    "org.typelevel" %% "cats-core"             % "2.2.0", // 2.1.1?
+    "io.circe"      %%% "circe-parser"         % Ver.circe,
+    "io.circe"      %%% "circe-generic-extras" % Ver.circe,
+    "io.circe"      %%% "circe-generic"        % Ver.circe,
+    "io.circe"      %%% "circe-literal"        % Ver.circe
   ),
   scalacOptions ++= Seq(
     "-Xlint",

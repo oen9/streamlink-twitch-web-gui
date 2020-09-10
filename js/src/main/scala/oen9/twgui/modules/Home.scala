@@ -8,6 +8,7 @@ import slinky.web.html._
   type Props = Unit
   val component = FunctionalComponent[Props] { _ =>
     div(
+      h1("Home"),
       p("This app is similar to streamlink-twitch-gui but works in your web browser."),
       p("Its purpose is to deliver some kind of remote control e.g. using mobile phone with Wi-Fi.")
     )

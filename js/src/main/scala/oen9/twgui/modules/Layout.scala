@@ -97,7 +97,7 @@ import slinky.web.html._
           className := "row flex-xl-nowrap",
           div(className := "col-md-3 col-xl-2 bd-sidebar mb-2", sidebar(props, location.pathname)),
           main(
-            className := "col-md-9 col-xl-10 py-md-3 pl-md-5 mb-2 bd-content ",
+            className := "col-md-9 col-xl-10 py-md-3 pl-md-5 mb-2 bd-content",
             role := "main",
             contentBody(props)
           )

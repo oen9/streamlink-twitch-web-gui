@@ -6,3 +6,7 @@
   width: 140px;
   height: 46px;
 }
+
+.card-18 {
+  min-width: 18rem !important;
+}
