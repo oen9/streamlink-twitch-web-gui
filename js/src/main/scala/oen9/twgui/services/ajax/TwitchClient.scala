@@ -10,7 +10,7 @@ object TwitchClient {
 
   private[this] def authHeader(clientId: String, token: String)       = Map("Client-ID" -> clientId, "Authorization" -> token)
   private[this] def krakenAuthHeader(clientId: String, token: String) = authHeader(clientId, s"OAuth $token")
-  private[this] def helixAuthHeader(clientId: String, token: String)  = authHeader(clientId, s"Barrer $token")
+  private[this] def helixAuthHeader(clientId: String, token: String)  = authHeader(clientId, s"Bearer $token")
 
   private[this] val baseUrl   = "https://api.twitch.tv"
   private[this] val krakenUrl = s"$baseUrl/kraken"
@@ -23,4 +23,23 @@ object TwitchClient {
         headers = JSON_TYPE ++ krakenAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[StreamsFollowed])
+
+  def getStreams(clientId: String, token: String) =
+    Ajax
+      .get(
+        url = s"$helixUrl/streams",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Streams])
+
+  def getGames(clientId: String, token: String, ids: Seq[String]) = {
+    val queryParams = ids.map(id => s"id=$id").mkString("&")
+    println(queryParams)
+    Ajax
+      .get(
+        url = s"$helixUrl/games?$queryParams",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Games])
+  }
 }

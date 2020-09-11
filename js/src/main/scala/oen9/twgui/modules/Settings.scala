@@ -11,6 +11,9 @@ import slinky.core.facade.ReactElement
 import slinky.core.FunctionalComponent
 import slinky.core.SyntheticEvent
 import slinky.web.html._
+import oen9.twgui.services.ajax.TwitchClient
+import scala.util.Success
+import scala.util.Failure
 
 @react object Settings {
   type Props = Unit
@@ -28,6 +31,19 @@ import slinky.web.html._
     def handleSave(e: SyntheticEvent[html.Form, Event]): Unit = {
       e.preventDefault()
       dispatch(SetTwitchCred(TwitchCred(clientId, token)))
+
+      // TODO remove
+      //import scala.concurrent.ExecutionContext.Implicits.global
+      //val res = for {
+      //  streams <- TwitchClient.getStreams(clientId, token)
+      //  games <- TwitchClient.getGames(clientId, token, streams.data.map(_.game_id))
+      //} yield games
+
+      //res.onComplete {
+      //  case Success(value) =>  println("succ: " + value.toString())
+      //  case Failure(exception) => println("error: " + exception.toString())
+      //}
+      //println("ping")
     }
 
     def onChangeClientId(e: SyntheticEvent[html.Input, Event]): Unit = setClientId(e.target.value)

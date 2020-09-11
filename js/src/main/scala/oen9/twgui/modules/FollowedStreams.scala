@@ -6,6 +6,7 @@ import diode.data.PotState.PotPending
 import diode.data.PotState.PotReady
 import oen9.twgui.services.ajax.TwitchData.StreamFollowed
 import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.ClearStreamsFollowed
 import oen9.twgui.services.CircuitActions.TryGetStreamsFollowed
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
@@ -21,7 +22,10 @@ import slinky.web.html._
     val (streamsFollowed, dispatch) = ReactDiode.useDiode(AppCircuit.zoom(_.streamsFollowed))
     val (twitchCred, _)             = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
 
-    useEffect(refreshData _, Seq())
+    useEffect(() => {
+      refreshData()
+      () => dispatch(ClearStreamsFollowed)
+    }, Seq())
 
     def refreshData(): Unit = dispatch(TryGetStreamsFollowed(twitchCred.clientId, twitchCred.token))
 

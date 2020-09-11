@@ -16,6 +16,7 @@ object Storage {
     val clientId = localStorage.getItem(TWITCH_CLIENT_ID)
     val token    = localStorage.getItem(TWITCH_TOKEN)
 
-    TwitchCred(clientId = clientId, token = token)
+    if (clientId == null && token == null) TwitchCred()
+    else TwitchCred(clientId = clientId, token = token)
   }
 }
