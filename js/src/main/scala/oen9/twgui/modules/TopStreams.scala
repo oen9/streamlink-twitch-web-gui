@@ -6,6 +6,8 @@ import diode.data.PotState.PotPending
 import diode.data.PotState.PotReady
 import oen9.twgui.services.ajax.TwitchData.StreamData
 import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.ClearGames
+import oen9.twgui.services.CircuitActions.ClearStreams
 import oen9.twgui.services.CircuitActions.TryGetStreams
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
@@ -13,7 +15,6 @@ import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.core.FunctionalComponent
 import slinky.web.html._
-import oen9.twgui.services.CircuitActions.ClearStreams
 
 @react object TopStreams {
   type Props = Unit
@@ -24,7 +25,7 @@ import oen9.twgui.services.CircuitActions.ClearStreams
 
     useEffect(() => {
       refreshData()
-      () => dispatch(ClearStreams)
+      () => { dispatch(ClearStreams); dispatch(ClearGames) }
     }, Seq())
 
     def refreshData(): Unit = dispatch(TryGetStreams(twitchCred.clientId, twitchCred.token))
@@ -32,8 +33,8 @@ import oen9.twgui.services.CircuitActions.ClearStreams
     def prettyStream(sd: StreamData) =
       div(
         key := sd.user_name,
-        className := "card card-18 mb-2",
-        img(src := sd.thumbnail_url.replace("{width}", "640").replace("{height}", "320"), className := "card-img-top"),
+        className := "card card-14 mb-2",
+        img(src := sd.thumbnail_url.replace("{width}", "440").replace("{height}", "248"), className := "card-img-top"),
         h5(className := "card-header", sd.user_name),
         div(
           className := "card-body",

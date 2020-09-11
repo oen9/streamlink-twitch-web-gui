@@ -34,10 +34,18 @@ object TwitchClient {
 
   def getGames(clientId: String, token: String, ids: Seq[String]) = {
     val queryParams = ids.map(id => s"id=$id").mkString("&")
-    println(queryParams)
     Ajax
       .get(
         url = s"$helixUrl/games?$queryParams",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Games])
+  }
+
+  def getGamesTop(clientId: String, token: String) = {
+    Ajax
+      .get(
+        url = s"$helixUrl/games/top",
         headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Games])

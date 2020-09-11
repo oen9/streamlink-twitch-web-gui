@@ -32,7 +32,7 @@ import slinky.web.html._
     def prettyStreamFollowed(sf: StreamFollowed) =
       div(
         key := sf.channel.name,
-        className := "card card-18 mb-2",
+        className := "card card-14 mb-2",
         img(src := sf.preview.large, className := "card-img-top"),
         h5(className := "card-header", sf.channel.display_name),
         div(

@@ -9,6 +9,7 @@ object TwitchData {
   case class Streams(data: Seq[StreamData])
   case class StreamData(game_id: String, thumbnail_url: String, title: String, user_name: String, viewer_count: Int)
 
-  case class Games(data: Seq[GameData])
+  case class Games(data: Seq[GameData], pagination: Option[Pagination] = None)
   case class GameData(box_art_url: String, id: String, name: String)
+  case class Pagination(cursor: String)
 }

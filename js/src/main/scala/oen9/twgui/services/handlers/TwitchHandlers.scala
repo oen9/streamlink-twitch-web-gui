@@ -44,5 +44,11 @@ class GamesHandler[M](modelRW: ModelRW[M, Pot[Games]]) extends ActionHandler(mod
     case action: TryGetGames =>
       val updateF = action.effect(TwitchClient.getGames(action.clientId, action.token, action.ids))(identity _)
       action.handleWith(this, updateF)(PotAction.handler())
+
+    case action: TryGetGamesTop =>
+      val updateF = action.effect(TwitchClient.getGamesTop(action.clientId, action.token))(identity _)
+      action.handleWith(this, updateF)(PotAction.handler())
+
+    case ClearGames => updated(Empty)
   }
 }
