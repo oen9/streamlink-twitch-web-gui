@@ -4,6 +4,7 @@ import diode.Action
 import diode.data.Empty
 import diode.data.Pot
 import diode.data.PotAction
+import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
@@ -33,4 +34,10 @@ object CircuitActions {
     def next(newResult: Pot[Games]) = copy(potResult = newResult)
   }
   case object ClearGames extends Action
+
+  case class TryGetFeaturedStreams(clientId: String, token: String, potResult: Pot[FeaturedStreams] = Empty)
+      extends PotAction[FeaturedStreams, TryGetFeaturedStreams] {
+    def next(newResult: Pot[FeaturedStreams]) = copy(potResult = newResult)
+  }
+  case object ClearFeaturedStreams extends Action
 }

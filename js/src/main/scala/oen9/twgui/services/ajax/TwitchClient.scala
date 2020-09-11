@@ -32,6 +32,14 @@ object TwitchClient {
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Streams])
 
+  def getStreamsFeatured(clientId: String, token: String) =
+    Ajax
+      .get(
+        url = s"$krakenUrl/streams/featured?limit=5",
+        headers = JSON_TYPE ++ krakenAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[FeaturedStreams])
+
   def getGames(clientId: String, token: String, ids: Seq[String]) = {
     val queryParams = ids.map(id => s"id=$id").mkString("&")
     Ajax
@@ -42,12 +50,11 @@ object TwitchClient {
       .transform(AjaxHelper.decodeAndHandleErrors[Games])
   }
 
-  def getGamesTop(clientId: String, token: String) = {
+  def getGamesTop(clientId: String, token: String) =
     Ajax
       .get(
         url = s"$helixUrl/games/top",
         headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Games])
-  }
 }

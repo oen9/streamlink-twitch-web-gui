@@ -8,6 +8,7 @@ import diode.data.PotAction
 import diode.ModelRW
 import diode.NoAction
 import oen9.twgui.services.ajax.TwitchClient
+import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
@@ -50,5 +51,15 @@ class GamesHandler[M](modelRW: ModelRW[M, Pot[Games]]) extends ActionHandler(mod
       action.handleWith(this, updateF)(PotAction.handler())
 
     case ClearGames => updated(Empty)
+  }
+}
+
+class FeaturedStreamsHandler[M](modelRW: ModelRW[M, Pot[FeaturedStreams]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetFeaturedStreams =>
+      val updateF = action.effect(TwitchClient.getStreamsFeatured(action.clientId, action.token))(identity _)
+      action.handleWith(this, updateF)(PotAction.handler())
+
+    case ClearFeaturedStreams => updated(Empty)
   }
 }
