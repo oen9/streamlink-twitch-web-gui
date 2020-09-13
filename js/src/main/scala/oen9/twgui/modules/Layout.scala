@@ -1,12 +1,18 @@
 package oen9.twgui.modules
 
+import diode.data.PotState.PotEmpty
+import diode.data.PotState.PotReady
 import oen9.twgui.bridges.reactrouter.NavLink
 import oen9.twgui.bridges.reactrouter.ReactRouterDOM
 import oen9.twgui.modules.MainRouter.Loc
 import oen9.twgui.modules.MainRouter.MenuItemGroup
 import oen9.twgui.modules.MainRouter.RegularMenuItem
+import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.TryGetMe
+import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
 import slinky.core.facade.Fragment
+import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.core.FunctionalComponent
 import slinky.reactrouter.Link
@@ -25,7 +31,7 @@ import slinky.web.html._
       items.map(item => createRegularMenuItem(item.idx, item.label, item.location))
     )
 
-  def nav(props: Props, currentPath: String) =
+  def nav(props: Props, currentPath: String, tokenDisplayName: String) =
     div(
       className := "navbar navbar-expand-md navbar-dark bg-secondary",
       Link(to = Loc.home)(
@@ -48,6 +54,7 @@ import slinky.web.html._
         ul(
           className := "navbar-nav mr-auto"
         ),
+        span(className := "mr-2", tokenDisplayName),
         NavLink(exact = true, to = Loc.settings)(
           className := "btn btn-primary d-lg-inline-block",
           i(className := "fas fa-cog")
@@ -87,10 +94,26 @@ import slinky.web.html._
     div(className := "footer bg-secondary text-white d-flex justify-content-center mt-auto py-3", "© 2020 oen")
 
   val component = FunctionalComponent[Props] { props =>
-    val location = ReactRouterDOM.useLocation()
+    val location        = ReactRouterDOM.useLocation()
+    val (me, dispatch)  = ReactDiode.useDiode(AppCircuit.zoom(_.me))
+    val (twitchCred, _) = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
+
+    useEffect(
+      () =>
+        me.state match {
+          case PotEmpty => dispatch(TryGetMe(twitchCred.clientId, twitchCred.token))
+          case _        => ()
+        },
+      Seq()
+    )
+
+    val tokenDisplayName = me.state match {
+          case PotReady => me.fold("not logged")(_.display_name)
+          case _ => "not logged"
+    }
 
     Fragment(
-      nav(props, location.pathname),
+      nav(props, location.pathname, tokenDisplayName),
       div(
         className := "container-fluid mt-2",
         div(

@@ -8,9 +8,15 @@ import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
+import oen9.twgui.services.ajax.TwitchData.UserData
 
 object CircuitActions {
   case class SetTwitchCred(newCred: TwitchCred) extends Action
+
+  case class TryGetMe(clientId: String, token: String, potResult: Pot[UserData] = Empty)
+      extends PotAction[UserData, TryGetMe] {
+    def next(newResult: Pot[UserData]) = copy(potResult = newResult)
+  }
 
   case class TryGetStreamsFollowed(clientId: String, token: String, potResult: Pot[StreamsFollowed] = Empty)
       extends PotAction[StreamsFollowed, TryGetStreamsFollowed] {

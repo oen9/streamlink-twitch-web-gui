@@ -17,4 +17,14 @@ object TwitchData {
   case class FeaturedS(stream: FeaturedStream)
   case class FeaturedStream(preview: Preview, channel: FeaturedChannel, viewers: Int)
   case class FeaturedChannel(_id: Long, status: String, display_name: String, game: String, followers: Int)
+
+  case class Users(data: Seq[UserData])
+  case class UserData(
+    id: Int = 0,
+    login: String = "",
+    display_name: String = "",
+    description: String = "",
+    profile_image_url: String = "",
+    offline_image_url: String = ""
+  )
 }

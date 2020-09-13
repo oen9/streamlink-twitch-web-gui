@@ -57,4 +57,12 @@ object TwitchClient {
         headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Games])
+
+  def getUsers(clientId: String, token: String) =
+    Ajax
+      .get(
+        url = s"$helixUrl/users",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Users])
 }

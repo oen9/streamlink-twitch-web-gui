@@ -12,6 +12,7 @@ import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
+import oen9.twgui.services.ajax.TwitchData.UserData
 import oen9.twgui.services.CircuitActions._
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -61,5 +62,13 @@ class FeaturedStreamsHandler[M](modelRW: ModelRW[M, Pot[FeaturedStreams]]) exten
       action.handleWith(this, updateF)(PotAction.handler())
 
     case ClearFeaturedStreams => updated(Empty)
+  }
+}
+
+class MeHandler[M](modelRW: ModelRW[M, Pot[UserData]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetMe =>
+      val updateF = action.effect(TwitchClient.getUsers(action.clientId, action.token))(_.data.headOption.getOrElse(UserData()))
+      action.handleWith(this, updateF)(PotAction.handler())
   }
 }
