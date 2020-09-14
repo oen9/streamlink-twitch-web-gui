@@ -7,6 +7,10 @@
   height: 46px;
 }
 
+.card-20 {
+  min-width: 20rem !important;
+}
+
 .card-14 {
   min-width: 14rem !important;
 }

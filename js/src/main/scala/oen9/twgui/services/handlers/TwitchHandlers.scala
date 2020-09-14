@@ -14,6 +14,7 @@ import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.ajax.TwitchData.UserData
 import oen9.twgui.services.CircuitActions._
+import oen9.twgui.services.Followers
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class StreamsFollowedHandler[M](modelRW: ModelRW[M, Pot[StreamsFollowed]]) extends ActionHandler(modelRW) {
@@ -68,7 +69,24 @@ class FeaturedStreamsHandler[M](modelRW: ModelRW[M, Pot[FeaturedStreams]]) exten
 class MeHandler[M](modelRW: ModelRW[M, Pot[UserData]]) extends ActionHandler(modelRW) {
   override def handle = {
     case action: TryGetMe =>
-      val updateF = action.effect(TwitchClient.getUsers(action.clientId, action.token))(_.data.headOption.getOrElse(UserData()))
+      val updateF =
+        action.effect(TwitchClient.getUsers(action.clientId, action.token))(_.data.headOption.getOrElse(UserData()))
       action.handleWith(this, updateF)(PotAction.handler())
+  }
+}
+
+class FollowedChannelsHandler[M](modelRW: ModelRW[M, Pot[Followers]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetFollowedChannels =>
+      def fetchData() =
+        for {
+          follows  <- TwitchClient.getUsersFollows(action.clientId, action.token, action.meId)
+          channels <- TwitchClient.getUsers(action.clientId, action.token, follows.data.map(_.to_id))
+        } yield Followers(follows.total, channels.data, follows.pagination)
+
+      val updateF = action.effect(fetchData())(identity _)
+      action.handleWith(this, updateF)(PotAction.handler())
+
+    case ClearFollowedChannels => updated(Empty)
   }
 }

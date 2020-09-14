@@ -65,4 +65,22 @@ object TwitchClient {
         headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Users])
+
+  def getUsers(clientId: String, token: String, ids: Seq[String]) = {
+    val queryParams = ids.map(id => s"id=$id").mkString("&")
+    Ajax
+      .get(
+        url = s"$helixUrl/users?$queryParams",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Users])
+  }
+
+  def getUsersFollows(clientId: String, token: String, fromId: Int) =
+    Ajax
+      .get(
+        url = s"$helixUrl/users/follows?from_id=$fromId",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[UsersFollows])
 }

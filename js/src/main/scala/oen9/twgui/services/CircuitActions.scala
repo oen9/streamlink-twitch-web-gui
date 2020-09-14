@@ -46,4 +46,10 @@ object CircuitActions {
     def next(newResult: Pot[FeaturedStreams]) = copy(potResult = newResult)
   }
   case object ClearFeaturedStreams extends Action
+
+  case class TryGetFollowedChannels(clientId: String, token: String, meId: Int, potResult: Pot[Followers] = Empty)
+      extends PotAction[Followers, TryGetFollowedChannels] {
+    def next(newResult: Pot[Followers]) = copy(potResult = newResult)
+  }
+  case object ClearFollowedChannels extends Action
 }
