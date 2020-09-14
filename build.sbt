@@ -8,7 +8,7 @@ val Ver = new {
   val logback = "1.2.3"
   val zio     = "1.0.1"
   val http4s  = "0.21.7"
-  val caliban = "0.9.1"
+  val caliban = "0.9.2"
 }
 
 lazy val sharedSettings = Seq(
@@ -40,9 +40,10 @@ lazy val sharedSettings = Seq(
 
 lazy val jsSettings = Seq(
   libraryDependencies ++= Seq(
-    "me.shadaj" %%% "slinky-web"          % Ver.slinky,
-    "me.shadaj" %%% "slinky-react-router" % Ver.slinky,
-    "io.suzaku" %%% "diode"               % "1.1.13"
+    "me.shadaj"             %%% "slinky-web"          % Ver.slinky,
+    "me.shadaj"             %%% "slinky-react-router" % Ver.slinky,
+    "io.suzaku"             %%% "diode"               % "1.1.13",
+    "com.github.ghostdogpr" %%% "caliban-client"      % Ver.caliban
   ),
   npmDependencies in Compile ++= Seq(
     "react"            -> "16.13.1",
@@ -108,3 +109,4 @@ lazy val appJVM = app.jvm
   )
 
 disablePlugins(RevolverPlugin)
+enablePlugins(CodegenPlugin)

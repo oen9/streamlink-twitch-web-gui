@@ -11,7 +11,9 @@ import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.ajax.TwitchData.UserData
 
 object CircuitActions {
-  case class SetTwitchCred(newCred: TwitchCred) extends Action
+  case class SetTwitchCred(newCred: TwitchCred)            extends Action
+  case object GetDefaultTwitchCred                         extends Action
+  case class GotDefaultTwitchCred(defaultCred: TwitchCred) extends Action
 
   case class TryGetMe(clientId: String, token: String, potResult: Pot[UserData] = Empty)
       extends PotAction[UserData, TryGetMe] {

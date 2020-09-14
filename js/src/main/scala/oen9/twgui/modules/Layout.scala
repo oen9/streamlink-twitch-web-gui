@@ -8,6 +8,7 @@ import oen9.twgui.modules.MainRouter.Loc
 import oen9.twgui.modules.MainRouter.MenuItemGroup
 import oen9.twgui.modules.MainRouter.RegularMenuItem
 import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.GetDefaultTwitchCred
 import oen9.twgui.services.CircuitActions.TryGetMe
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
@@ -99,17 +100,19 @@ import slinky.web.html._
     val (twitchCred, _) = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
 
     useEffect(
-      () =>
+      () => {
         me.state match {
           case PotEmpty => dispatch(TryGetMe(twitchCred.clientId, twitchCred.token))
           case _        => ()
-        },
+        }
+        if (twitchCred.clientId.isEmpty() && twitchCred.token.isEmpty()) dispatch(GetDefaultTwitchCred)
+      },
       Seq()
     )
 
     val tokenDisplayName = me.state match {
-          case PotReady => me.fold("not logged")(_.display_name)
-          case _ => "not logged"
+      case PotReady => me.fold("not logged")(_.display_name)
+      case _        => "not logged"
     }
 
     Fragment(
