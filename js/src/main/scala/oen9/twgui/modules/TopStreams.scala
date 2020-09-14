@@ -40,8 +40,8 @@ import slinky.web.html._
           className := "card-body",
           h5(className := "card-title", gameIdToName(sd.game_id)),
           p(className := "card-text", small(sd.title)),
-          a(href := "", className := "btn btn-primary", "play")
-        )
+        ),
+        div(className := "card-footer", a(href := "", className := "btn btn-primary", "play"))
       )
 
     def gameIdToName(id: String): String = games.state match {

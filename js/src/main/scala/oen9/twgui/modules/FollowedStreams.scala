@@ -39,8 +39,8 @@ import slinky.web.html._
           className := "card-body",
           h5(className := "card-title", sf.game),
           p(className := "card-text", small(sf.channel.status)),
-          a(href := "", className := "btn btn-primary", "play")
-        )
+        ),
+        div(className := "card-footer", a(href := "", className := "btn btn-primary", "play"))
       )
 
     div(
