@@ -111,8 +111,8 @@ import slinky.web.html._
     )
 
     val tokenDisplayName = me.state match {
-      case PotReady => me.fold("not logged")(_.display_name)
-      case _        => "not logged"
+      case PotReady => me.fold("not logged in")(_.display_name)
+      case _        => "not logged in"
     }
 
     Fragment(
