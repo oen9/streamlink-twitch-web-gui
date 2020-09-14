@@ -8,6 +8,7 @@ val Ver = new {
   val logback = "1.2.3"
   val zio     = "1.0.1"
   val http4s  = "0.21.7"
+  val caliban = "0.9.1"
 }
 
 lazy val sharedSettings = Seq(
@@ -68,7 +69,9 @@ lazy val jvmSettings = Seq(
     "org.http4s"            %% "http4s-blaze-server" % Ver.http4s,
     "org.http4s"            %% "http4s-circe"        % Ver.http4s,
     "org.http4s"            %% "http4s-dsl"          % Ver.http4s,
-    "org.http4s"            %% "http4s-blaze-client" % Ver.http4s
+    "org.http4s"            %% "http4s-blaze-client" % Ver.http4s,
+    "com.github.ghostdogpr" %% "caliban"             % Ver.caliban,
+    "com.github.ghostdogpr" %% "caliban-http4s"      % Ver.caliban
   ),
   libraryDependencies ++= Seq(
     "dev.zio" %% "zio-test"     % Ver.zio % Test,

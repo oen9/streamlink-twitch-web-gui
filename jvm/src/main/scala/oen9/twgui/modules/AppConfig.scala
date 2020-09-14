@@ -4,10 +4,11 @@ import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import zio._
 
-case class Http(port: Int, host: String)
-case class AppConfigData(http: Http, assets: String)
-
 object appConfig {
+  case class Http(port: Int, host: String)
+  case class Twitch(clientId: String, token: String)
+  case class AppConfigData(http: Http, twitch: Twitch, assets: String)
+
   type AppConfig = Has[AppConfig.Service]
 
   object AppConfig {

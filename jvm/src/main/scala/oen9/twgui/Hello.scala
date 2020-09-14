@@ -11,8 +11,11 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.CORS
 import org.http4s.server.middleware.CORSConfig
 
+import caliban.Http4sAdapter
 import oen9.twgui.endpoints.StaticEndpoints
+import oen9.twgui.gql.GQLResolver
 import oen9.twgui.modules.appConfig
+import org.http4s.server.Router
 import scala.concurrent.duration._
 
 object Hello extends App {
@@ -40,14 +43,13 @@ object Hello extends App {
       ec <- ZIO.accessM[Blocking](b => ZIO.succeed(b.get.blockingExecutor.asEC))
       catsBlocker = cats.effect.Blocker.liftExecutionContext(ec)
 
+      gqlResolver = new GQLResolver(cfg.twitch)
+      gqlInterpreter <- gqlResolver.api.interpreter
+
       httpApp = (
-        StaticEndpoints
-          .routes[AppEnv](
-            cfg.assets,
-            catsBlocker
-          )
-        )
-        .orNotFound
+        StaticEndpoints.routes[AppEnv](cfg.assets, catsBlocker, gqlResolver.api.render)
+          <+> Router("/api/graphql" -> Http4sAdapter.makeHttpService(gqlInterpreter))
+      ).orNotFound
 
       server <- ZIO.runtime[AppEnv].flatMap { implicit rts =>
         val ec = rts.platform.executor.asEC
