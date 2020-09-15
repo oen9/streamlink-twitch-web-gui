@@ -8,6 +8,7 @@ import oen9.twgui.services.ajax.TwitchData.StreamFollowed
 import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.ClearStreamsFollowed
 import oen9.twgui.services.CircuitActions.TryGetStreamsFollowed
+import oen9.twgui.services.CircuitActions.TryPlayStream
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -27,7 +28,8 @@ import slinky.web.html._
       () => dispatch(ClearStreamsFollowed)
     }, Seq())
 
-    def refreshData(): Unit = dispatch(TryGetStreamsFollowed(twitchCred.clientId, twitchCred.token))
+    def refreshData(): Unit            = dispatch(TryGetStreamsFollowed(twitchCred.clientId, twitchCred.token))
+    def playStream(name: String): Unit = dispatch(TryPlayStream(name))
 
     def prettyStreamFollowed(sf: StreamFollowed) =
       div(
@@ -38,9 +40,12 @@ import slinky.web.html._
         div(
           className := "card-body",
           h5(className := "card-title", sf.game),
-          p(className := "card-text", small(sf.channel.status)),
+          p(className := "card-text", small(sf.channel.status))
         ),
-        div(className := "card-footer", a(href := "", className := "btn btn-primary", "play"))
+        div(
+          className := "card-footer",
+          button(className := "btn btn-primary", "play", onClick := (() => playStream(sf.channel.name)))
+        )
       )
 
     div(

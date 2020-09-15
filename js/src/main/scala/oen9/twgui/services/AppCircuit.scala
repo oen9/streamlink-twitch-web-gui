@@ -9,13 +9,7 @@ import oen9.twgui.services.ajax.TwitchData.Pagination
 import oen9.twgui.services.ajax.TwitchData.Streams
 import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.ajax.TwitchData.UserData
-import oen9.twgui.services.handlers.FeaturedStreamsHandler
-import oen9.twgui.services.handlers.FollowedChannelsHandler
-import oen9.twgui.services.handlers.GamesHandler
-import oen9.twgui.services.handlers.MeHandler
-import oen9.twgui.services.handlers.StreamsFollowedHandler
-import oen9.twgui.services.handlers.StreamsHandler
-import oen9.twgui.services.handlers.TwitchCredHandler
+import oen9.twgui.services.handlers._
 
 case class TwitchCred(clientId: String = "", token: String = "")
 case class Followers(total: Int, data: Seq[UserData], pagination: Pagination)
@@ -26,7 +20,8 @@ case class RootModel(
   games: Pot[Games] = Empty,
   featuredStreams: Pot[FeaturedStreams] = Empty,
   me: Pot[UserData] = Empty,
-  followers: Pot[Followers] = Empty
+  followers: Pot[Followers] = Empty,
+  lastPlayedStream: Pot[Option[Boolean]] = Empty
 )
 
 object AppCircuit extends Circuit[RootModel] {
@@ -42,6 +37,7 @@ object AppCircuit extends Circuit[RootModel] {
     new GamesHandler(zoomTo(_.games)),
     new FeaturedStreamsHandler(zoomTo(_.featuredStreams)),
     new MeHandler(zoomTo(_.me)),
-    new FollowedChannelsHandler(zoomTo(_.followers))
+    new FollowedChannelsHandler(zoomTo(_.followers)),
+    new PlayStreamHandler(zoomTo(_.lastPlayedStream))
   )
 }

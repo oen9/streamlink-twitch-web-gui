@@ -22,12 +22,16 @@ object GQLClient {
       TwitchConfig.clientId ~ TwitchConfig.token
     }.mapN(TwitchCred)
   }
+  def playStreamMutation(name: String) = Mutations.playStream(name)
 
-  def getTwitchConfig = runRequest(getTwitchConfigQuery)
+  def getTwitchConfig          = runQuery(getTwitchConfigQuery)
+  def playStream(name: String) = runMutation(playStreamMutation(name))
 
-  private def runRequest[A](query: SelectionBuilder[Operations.RootQuery, A]) =
+  private def runQuery[A](query: SelectionBuilder[Operations.RootQuery, A])       = runRequest(query.toRequest(uri))
+  private def runMutation[A](query: SelectionBuilder[Operations.RootMutation, A]) = runRequest(query.toRequest(uri))
+  private def runRequest[A](request: Request[Either[CalibanClientError, A], Nothing]) =
     sttpBackend
-      .send(query.toRequest(uri))
+      .send(request)
       .map(_.body)
       .flatMap(handleError)
 

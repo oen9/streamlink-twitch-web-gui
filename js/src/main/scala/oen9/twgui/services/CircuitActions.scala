@@ -54,4 +54,9 @@ object CircuitActions {
     def next(newResult: Pot[Followers]) = copy(potResult = newResult)
   }
   case object ClearFollowedChannels extends Action
+
+  case class TryPlayStream(name: String, potResult: Pot[Option[Boolean]] = Empty)
+      extends PotAction[Option[Boolean], TryPlayStream] {
+    def next(newResult: Pot[Option[Boolean]]) = copy(potResult = newResult)
+  }
 }

@@ -25,5 +25,11 @@ object GQLClientData {
       Field("config", Obj(innerSelection))
   }
 
+  type Mutations = RootMutation
+  object Mutations {
+    def playStream(name: String): SelectionBuilder[RootMutation, Option[Boolean]] =
+      Field("playStream", OptionOf(Scalar()), arguments = List(Argument("name", name)))
+  }
+
 }
 

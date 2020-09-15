@@ -9,6 +9,7 @@ import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.ClearGames
 import oen9.twgui.services.CircuitActions.ClearStreams
 import oen9.twgui.services.CircuitActions.TryGetStreams
+import oen9.twgui.services.CircuitActions.TryPlayStream
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -28,7 +29,8 @@ import slinky.web.html._
       () => { dispatch(ClearStreams); dispatch(ClearGames) }
     }, Seq())
 
-    def refreshData(): Unit = dispatch(TryGetStreams(twitchCred.clientId, twitchCred.token))
+    def refreshData(): Unit            = dispatch(TryGetStreams(twitchCred.clientId, twitchCred.token))
+    def playStream(name: String): Unit = dispatch(TryPlayStream(name))
 
     def prettyStream(sd: StreamData) =
       div(
@@ -39,9 +41,12 @@ import slinky.web.html._
         div(
           className := "card-body",
           h5(className := "card-title", gameIdToName(sd.game_id)),
-          p(className := "card-text", small(sd.title)),
+          p(className := "card-text", small(sd.title))
         ),
-        div(className := "card-footer", a(href := "", className := "btn btn-primary", "play"))
+        div(
+          className := "card-footer",
+          button(className := "btn btn-primary", "play", onClick := (() => playStream(sd.user_name)))
+        )
       )
 
     def gameIdToName(id: String): String = games.state match {
