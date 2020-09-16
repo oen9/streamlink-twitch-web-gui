@@ -12,6 +12,7 @@ import oen9.twgui.Hello
 import oen9.twgui.modules.appConfig
 import zio._
 import zio.logging._
+import oen9.twgui.modules.services.streamlinkService
 
 class GQLResolver(appTwitchConfig: appConfig.Twitch) {
   val twitchConfig = TwitchConfig(appTwitchConfig.clientId, appTwitchConfig.token)
@@ -21,6 +22,7 @@ class GQLResolver(appTwitchConfig: appConfig.Twitch) {
   def playStream(args: PlayStreamArgs): ZIO[Hello.AppEnv, Throwable, Boolean] =
     for {
       _ <- log.info(s"playStream: ${args.name}")
+      _ <- streamlinkService.play(args.name)
     } yield true
 
   val queries   = Queries(config = getConfig)

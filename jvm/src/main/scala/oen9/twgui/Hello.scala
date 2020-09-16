@@ -15,22 +15,25 @@ import caliban.Http4sAdapter
 import oen9.twgui.endpoints.StaticEndpoints
 import oen9.twgui.gql.GQLResolver
 import oen9.twgui.modules.appConfig
+import oen9.twgui.modules.services.streamlinkService
 import org.http4s.server.Router
 import scala.concurrent.duration._
 
 object Hello extends App {
 
-  type AppEnv = ZEnv with appConfig.AppConfig with Logging
+  type AppEnv = ZEnv with appConfig.AppConfig with Logging with streamlinkService.StreamlinkService
 
   type AppTask[A] = ZIO[AppEnv, Throwable, A]
 
   override def run(args: List[String]): URIO[ZEnv, ExitCode] =
     app().provideCustomLayer {
-      val appConf = appConfig.AppConfig.live
-      val logging = slf4j.Slf4jLogger.make((_, msg) => msg)
+      val appConf       = appConfig.AppConfig.live
+      val logging       = slf4j.Slf4jLogger.make((_, msg) => msg)
+      val streamlinkSrv = streamlinkService.StreamlinkService.live
 
       appConf ++
-        logging
+        logging ++
+        streamlinkSrv
     }.exitCode
 
   def app(): ZIO[AppEnv, Throwable, Unit] =
