@@ -41,8 +41,8 @@ object GQLClientData {
 
   type Video
   object Video {
-    def live[A](innerSelection: SelectionBuilder[LiveVideo, A]): SelectionBuilder[Video, List[A]] =
-      Field("live", ListOf(Obj(innerSelection)))
+    def live[A](innerSelection: SelectionBuilder[LiveVideo, A]): SelectionBuilder[Video, Option[List[A]]] =
+      Field("live", OptionOf(ListOf(Obj(innerSelection))))
   }
 
   type VideoMut

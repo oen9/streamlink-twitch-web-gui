@@ -7,7 +7,9 @@ object GQLData {
   case class TwitchConfig(clientId: String, token: String)
   case class StreamlinkConfig(params: String)
   case class Config(twitch: TwitchConfig, streamlink: StreamlinkConfig)
-  case class Video(live: Seq[LiveVideo])
+  case class Video(
+    live: ZIO[Hello.AppEnv, Throwable, Set[LiveVideo]]
+  )
   case class LiveVideo(name: String)
 
   case class StreamlinkMut(

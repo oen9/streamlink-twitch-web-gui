@@ -15,13 +15,13 @@ import caliban.Http4sAdapter
 import oen9.twgui.endpoints.StaticEndpoints
 import oen9.twgui.gql.GQLResolver
 import oen9.twgui.modules.appConfig
-import oen9.twgui.modules.services.streamlinkService
+import oen9.twgui.modules.services.streamlinkService.StreamlinkService
 import org.http4s.server.Router
 import scala.concurrent.duration._
 
 object Hello extends App {
 
-  type AppEnv = ZEnv with appConfig.AppConfig with Logging with streamlinkService.StreamlinkService
+  type AppEnv = ZEnv with appConfig.AppConfig with Logging with StreamlinkService
 
   type AppTask[A] = ZIO[AppEnv, Throwable, A]
 
@@ -29,7 +29,7 @@ object Hello extends App {
     app().provideCustomLayer {
       val appConf       = appConfig.AppConfig.live
       val logging       = slf4j.Slf4jLogger.make((_, msg) => msg)
-      val streamlinkSrv = streamlinkService.StreamlinkService.live
+      val streamlinkSrv = logging >>> StreamlinkService.live
 
       appConf ++
         logging ++
