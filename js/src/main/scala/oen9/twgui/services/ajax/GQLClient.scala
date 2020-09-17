@@ -22,7 +22,11 @@ object GQLClient {
       TwitchConfig.clientId ~ TwitchConfig.token
     }.mapN(TwitchCred)
   }
-  def playStreamMutation(name: String) = Mutations.playStream(name)
+  def playStreamMutation(name: String) = Mutations.streamlink {
+    StreamlinkMut.video {
+      VideoMut.playStream(name)
+    }
+  }
 
   def getTwitchConfig          = runQuery(getTwitchConfigQuery)
   def playStream(name: String) = runMutation(playStreamMutation(name))

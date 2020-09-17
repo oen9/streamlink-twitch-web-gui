@@ -14,15 +14,7 @@ object streamlinkService {
 
     val live: Layer[Nothing, StreamlinkService] = ZLayer.fromEffect(for {
       ref <- Ref.make(Seq[StreamlinkProcess]())
-      sls = new Service {
-        override def play(name: String): Task[Unit] =
-          for {
-            procs   <- ref.get
-            _       <- ZIO.effect(procs.foreach(_.proc.destroy()))
-            newProc <- ZIO.effect((s"streamlink twitch.tv/$name best").run())
-            _       <- ref.update(_ :+ StreamlinkProcess(name, newProc))
-          } yield ()
-      }
+      sls = new StreamlinkServiceLive(ref)
     } yield sls)
   }
 

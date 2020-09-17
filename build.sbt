@@ -18,7 +18,7 @@ lazy val sharedSettings = Seq(
   organizationName := "oen9",
   name := "streamlink-twitch-web-gui",
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core"             % "2.2.0", // 2.1.1?
+    "org.typelevel" %% "cats-core"             % "2.2.0",
     "io.circe"      %%% "circe-parser"         % Ver.circe,
     "io.circe"      %%% "circe-generic-extras" % Ver.circe,
     "io.circe"      %%% "circe-generic"        % Ver.circe,

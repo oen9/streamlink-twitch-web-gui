@@ -5,10 +5,21 @@ import zio._
 
 object GQLData {
   case class TwitchConfig(clientId: String, token: String)
-  case class Config(twitch: TwitchConfig)
+  case class StreamlinkConfig(params: String)
+  case class Config(twitch: TwitchConfig, streamlink: StreamlinkConfig)
+  case class Video(live: Seq[LiveVideo])
+  case class LiveVideo(name: String)
 
-  case class PlayStreamArgs(name: String)
+  case class StreamlinkMut(
+    video: VideoMut,
+    config: StreamlinkConfig => ZIO[Hello.AppEnv, Throwable, Boolean]
+  )
+  case class VideoMut(
+    playStream: StreamNameArgs => ZIO[Hello.AppEnv, Throwable, Boolean],
+    closeStream: StreamNameArgs => ZIO[Hello.AppEnv, Throwable, Boolean]
+  )
+  case class StreamNameArgs(name: String)
 
-  case class Queries(config: Config)
-  case class Mutations(playStream: PlayStreamArgs => ZIO[Hello.AppEnv, Throwable, Boolean])
+  case class Queries(config: Config, video: Video)
+  case class Mutations(streamlink: StreamlinkMut)
 }
