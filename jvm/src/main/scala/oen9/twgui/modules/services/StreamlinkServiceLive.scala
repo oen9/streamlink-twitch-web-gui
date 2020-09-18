@@ -9,9 +9,11 @@ import zio.logging.Logger
 class StreamlinkServiceLive(logger: Logger[String], processes: Ref[Set[StreamlinkProcess]]) extends Service {
   override def play(name: String): Task[Unit] =
     for {
-      _       <- logger.info(s"play: $name")
-      newProc <- ZIO.effect((s"streamlink twitch.tv/$name best").run())
-      _       <- processes.update(_ + StreamlinkProcess(name, newProc))
+      _              <- logger.info(s"play: $name")
+      liveProccesses <- processes.get
+      _              <- liveProccesses.find(_.name == name).fold(unit)(_ => logAndFail(s"$name is already live"))
+      newProc        <- ZIO.effect((s"streamlink twitch.tv/$name best").run())
+      _              <- processes.update(_ + StreamlinkProcess(name, newProc))
     } yield ()
 
   override def close(name: String): Task[Unit] =
@@ -30,4 +32,11 @@ class StreamlinkServiceLive(logger: Logger[String], processes: Ref[Set[Streamlin
       liveNames = procs.map(_.name)
       _ <- logger.debug(s"getLive: ${liveNames.mkString(", ")}")
     } yield liveNames
+
+  private def unit: Task[Unit] = ZIO.unit
+  private def logAndFail(msg: String): Task[Unit] =
+    for {
+      _ <- logger.error(msg)
+      _ <- ZIO.fail(new Throwable(msg))
+    } yield ()
 }
