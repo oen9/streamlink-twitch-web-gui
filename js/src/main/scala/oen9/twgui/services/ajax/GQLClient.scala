@@ -22,14 +22,27 @@ object GQLClient {
       TwitchConfig.clientId ~ TwitchConfig.token
     }.mapN(TwitchCred)
   }
+  def getLiveVideosQuery = Queries.video {
+    Video.live {
+      LiveVideo.name
+    }
+  }
+
   def playStreamMutation(name: String) = Mutations.streamlink {
     StreamlinkMut.video {
       VideoMut.playStream(name)
     }
   }
+  def closeStreamMutation(name: String) = Mutations.streamlink {
+    StreamlinkMut.video {
+      VideoMut.closeStream(name)
+    }
+  }
 
-  def getTwitchConfig          = runQuery(getTwitchConfigQuery)
-  def playStream(name: String) = runMutation(playStreamMutation(name))
+  def getTwitchConfig           = runQuery(getTwitchConfigQuery)
+  def getLiveVideos             = runQuery(getLiveVideosQuery).map(_.fold(Set[String]())(_.toSet))
+  def playStream(name: String)  = runMutation(playStreamMutation(name))
+  def closeStream(name: String) = runMutation(closeStreamMutation(name))
 
   private def runQuery[A](query: SelectionBuilder[Operations.RootQuery, A])       = runRequest(query.toRequest(uri))
   private def runMutation[A](query: SelectionBuilder[Operations.RootMutation, A]) = runRequest(query.toRequest(uri))

@@ -15,6 +15,7 @@ import slinky.reactrouter.Switch
       Route(exact = true, path = Loc.home, component = Home.component),
       Route(exact = true, path = Loc.about, component = About.component),
       Route(exact = true, path = Loc.settings, component = Settings.component),
+      Route(exact = true, path = Loc.liveVideos, component = LiveVideos.component),
       Route(exact = true, path = Loc.featured, component = Featured.component),
       Route(exact = true, path = Loc.games, component = Games.component),
       Route(exact = true, path = Loc.topStreams, component = TopStreams.component),
@@ -39,6 +40,7 @@ import slinky.reactrouter.Switch
     val topStreams       = "/top-streams"
     val followedStreams  = "/followed-streams"
     val followedChannels = "/followed-channels"
+    val liveVideos       = "/live-videos"
   }
 
   val menuItems: Seq[MenuItemType] = Seq(
@@ -65,6 +67,7 @@ import slinky.reactrouter.Switch
       items = Seq(
         RegularMenuItem("401", "Home", Loc.home),
         RegularMenuItem("402", "Settings", Loc.settings),
+        RegularMenuItem("403", "Live videos", Loc.liveVideos),
         RegularMenuItem("499", "About", Loc.about)
       )
     )

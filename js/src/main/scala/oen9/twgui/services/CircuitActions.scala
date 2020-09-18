@@ -59,4 +59,12 @@ object CircuitActions {
       extends PotAction[Option[Boolean], TryPlayStream] {
     def next(newResult: Pot[Option[Boolean]]) = copy(potResult = newResult)
   }
+  case class TryCloseStream(name: String, potResult: Pot[Option[Boolean]] = Empty)
+      extends PotAction[Option[Boolean], TryCloseStream] {
+    def next(newResult: Pot[Option[Boolean]]) = copy(potResult = newResult)
+  }
+  case class TryGetLiveVideos(potResult: Pot[Set[String]] = Empty)
+      extends PotAction[Set[String], TryGetLiveVideos] {
+    def next(newResult: Pot[Set[String]]) = copy(potResult = newResult)
+  }
 }

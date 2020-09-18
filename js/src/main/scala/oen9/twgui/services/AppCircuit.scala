@@ -21,7 +21,8 @@ case class RootModel(
   featuredStreams: Pot[FeaturedStreams] = Empty,
   me: Pot[UserData] = Empty,
   followers: Pot[Followers] = Empty,
-  lastPlayedStream: Pot[Option[Boolean]] = Empty
+  lastStreamOperation: Pot[Option[Boolean]] = Empty,
+  liveVideos: Pot[Set[String]] = Empty
 )
 
 object AppCircuit extends Circuit[RootModel] {
@@ -38,6 +39,8 @@ object AppCircuit extends Circuit[RootModel] {
     new FeaturedStreamsHandler(zoomTo(_.featuredStreams)),
     new MeHandler(zoomTo(_.me)),
     new FollowedChannelsHandler(zoomTo(_.followers)),
-    new PlayStreamHandler(zoomTo(_.lastPlayedStream))
+    new PlayStreamHandler(zoomTo(_.lastStreamOperation)),
+    new CloseStreamHandler(zoomTo(_.lastStreamOperation)),
+    new LiveVideosHandler(zoomTo(_.liveVideos))
   )
 }

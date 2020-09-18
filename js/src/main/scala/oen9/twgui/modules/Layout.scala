@@ -9,6 +9,7 @@ import oen9.twgui.modules.MainRouter.MenuItemGroup
 import oen9.twgui.modules.MainRouter.RegularMenuItem
 import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.GetDefaultTwitchCred
+import oen9.twgui.services.CircuitActions.TryGetLiveVideos
 import oen9.twgui.services.CircuitActions.TryGetMe
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
@@ -32,7 +33,7 @@ import slinky.web.html._
       items.map(item => createRegularMenuItem(item.idx, item.label, item.location))
     )
 
-  def nav(props: Props, currentPath: String, tokenDisplayName: String) =
+  def nav(props: Props, currentPath: String, tokenDisplayName: String, liveVideosBadge: String) =
     div(
       className := "navbar navbar-expand-md navbar-dark bg-secondary",
       Link(to = Loc.home)(
@@ -56,6 +57,11 @@ import slinky.web.html._
           className := "navbar-nav mr-auto"
         ),
         span(className := "mr-2", tokenDisplayName),
+        NavLink(exact = true, to = Loc.liveVideos)(
+          className := "btn btn-primary d-lg-inline-block mr-1",
+          i(className := "fas fa-tv mr-1"),
+          span(className := "badge badge-light", liveVideosBadge)
+        ),
         NavLink(exact = true, to = Loc.settings)(
           className := "btn btn-primary d-lg-inline-block",
           i(className := "fas fa-cog")
@@ -98,11 +104,16 @@ import slinky.web.html._
     val location        = ReactRouterDOM.useLocation()
     val (me, dispatch)  = ReactDiode.useDiode(AppCircuit.zoom(_.me))
     val (twitchCred, _) = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
+    val (liveVideos, _) = ReactDiode.useDiode(AppCircuit.zoom(_.liveVideos))
 
     useEffect(
       () => {
         me.state match {
           case PotEmpty => dispatch(TryGetMe(twitchCred.clientId, twitchCred.token))
+          case _        => ()
+        }
+        liveVideos.state match {
+          case PotEmpty => dispatch(TryGetLiveVideos())
           case _        => ()
         }
         if (twitchCred.clientId.isEmpty() && twitchCred.token.isEmpty()) dispatch(GetDefaultTwitchCred)
@@ -115,8 +126,13 @@ import slinky.web.html._
       case _        => "not logged in"
     }
 
+    val liveVideosBadge = liveVideos.state match {
+      case PotReady => liveVideos.fold("?")(_.size.toString())
+      case _        => "?"
+    }
+
     Fragment(
-      nav(props, location.pathname, tokenDisplayName),
+      nav(props, location.pathname, tokenDisplayName, liveVideosBadge),
       div(
         className := "container-fluid mt-2",
         div(
