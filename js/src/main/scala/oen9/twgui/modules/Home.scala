@@ -10,7 +10,11 @@ import slinky.web.html._
     div(
       h1("Home"),
       p("This app is similar to streamlink-twitch-gui but works in your web browser."),
-      p("Its purpose is to deliver some kind of remote control e.g. using mobile phone with Wi-Fi.")
+      p("Its purpose is to deliver some kind of remote control e.g. using mobile phone with Wi-Fi."),
+      div(
+        className := "text-center",
+        img(className := "img-fluid", src := "front-res/img/topology.png")
+      )
     )
   }
 }
