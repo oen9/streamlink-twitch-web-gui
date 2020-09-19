@@ -14,6 +14,9 @@ object CircuitActions {
   case class SetTwitchCred(newCred: TwitchCred)            extends Action
   case object GetDefaultTwitchCred                         extends Action
   case class GotDefaultTwitchCred(defaultCred: TwitchCred) extends Action
+  case class SetStreamlinkConfig(newCfg: StreamlinkConfig) extends Action
+  case object GetStreamlinkConfig                          extends Action
+  case class GotStreamlinkConfig(cfg: StreamlinkConfig)    extends Action
 
   case class TryGetMe(clientId: String, token: String, potResult: Pot[UserData] = Empty)
       extends PotAction[UserData, TryGetMe] {
@@ -63,8 +66,7 @@ object CircuitActions {
       extends PotAction[Option[Boolean], TryCloseStream] {
     def next(newResult: Pot[Option[Boolean]]) = copy(potResult = newResult)
   }
-  case class TryGetLiveVideos(potResult: Pot[Set[String]] = Empty)
-      extends PotAction[Set[String], TryGetLiveVideos] {
+  case class TryGetLiveVideos(potResult: Pot[Set[String]] = Empty) extends PotAction[Set[String], TryGetLiveVideos] {
     def next(newResult: Pot[Set[String]]) = copy(potResult = newResult)
   }
 }

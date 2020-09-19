@@ -12,6 +12,7 @@ import oen9.twgui.services.ajax.TwitchData.UserData
 import oen9.twgui.services.handlers._
 
 case class TwitchCred(clientId: String = "", token: String = "")
+case class StreamlinkConfig(params: String = "")
 case class Followers(total: Int, data: Seq[UserData], pagination: Pagination)
 case class RootModel(
   twitchCred: TwitchCred = TwitchCred(),
@@ -22,7 +23,8 @@ case class RootModel(
   me: Pot[UserData] = Empty,
   followers: Pot[Followers] = Empty,
   lastStreamOperation: Pot[Option[Boolean]] = Empty,
-  liveVideos: Pot[Set[String]] = Empty
+  liveVideos: Pot[Set[String]] = Empty,
+  streamlinkConfig: StreamlinkConfig = StreamlinkConfig()
 )
 
 object AppCircuit extends Circuit[RootModel] {
@@ -41,6 +43,7 @@ object AppCircuit extends Circuit[RootModel] {
     new FollowedChannelsHandler(zoomTo(_.followers)),
     new PlayStreamHandler(zoomTo(_.lastStreamOperation)),
     new CloseStreamHandler(zoomTo(_.lastStreamOperation)),
-    new LiveVideosHandler(zoomTo(_.liveVideos))
+    new LiveVideosHandler(zoomTo(_.liveVideos)),
+    new StreamlinkConfigHandler(zoomTo(_.streamlinkConfig))
   )
 }

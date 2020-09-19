@@ -9,6 +9,7 @@ import oen9.twgui.modules.MainRouter.MenuItemGroup
 import oen9.twgui.modules.MainRouter.RegularMenuItem
 import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.GetDefaultTwitchCred
+import oen9.twgui.services.CircuitActions.GetStreamlinkConfig
 import oen9.twgui.services.CircuitActions.TryGetLiveVideos
 import oen9.twgui.services.CircuitActions.TryGetMe
 import oen9.twgui.services.ReactDiode
@@ -117,6 +118,7 @@ import slinky.web.html._
           case _        => ()
         }
         if (twitchCred.clientId.isEmpty() && twitchCred.token.isEmpty()) dispatch(GetDefaultTwitchCred)
+        dispatch(GetStreamlinkConfig)
       },
       Seq()
     )

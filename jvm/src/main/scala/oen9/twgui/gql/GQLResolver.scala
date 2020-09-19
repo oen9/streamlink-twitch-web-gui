@@ -6,16 +6,20 @@ import caliban.schema.GenericSchema
 import oen9.twgui.gql.GQLData._
 import oen9.twgui.Hello
 import oen9.twgui.modules.appConfig
-import zio._
 import oen9.twgui.modules.services.streamlinkService
 
 class GQLResolver(appTwitchConfig: appConfig.Twitch) {
   val twitchConfig = TwitchConfig(appTwitchConfig.clientId, appTwitchConfig.token)
 
-  def getConfig = Config(twitch = twitchConfig, streamlink = StreamlinkConfig("foo"))
+  def getStreamlinkConfig()            = streamlinkService.getParams().map(StreamlinkConfig)
+  def getConfig = Config(
+    twitch = twitchConfig,
+    streamlink = getStreamlinkConfig()
+  )
 
-  def playStream(args: StreamNameArgs)  = streamlinkService.play(args.name).map(_ => true)
-  def closeStream(args: StreamNameArgs) = streamlinkService.close(args.name).map(_ => true)
+  def playStream(args: StreamNameArgs)            = streamlinkService.play(args.name).map(_ => true)
+  def closeStream(args: StreamNameArgs)           = streamlinkService.close(args.name).map(_ => true)
+  def setStreamlinkConfig(args: StreamlinkConfig) = streamlinkService.setParams(args.params).map(_ => true)
   def getLive() =
     for {
       liveNames <- streamlinkService.getLive()
@@ -33,7 +37,7 @@ class GQLResolver(appTwitchConfig: appConfig.Twitch) {
         playStream = playStream _,
         closeStream = closeStream _
       ),
-      config = _ => ZIO.succeed(false)
+      config = setStreamlinkConfig _
     )
   )
 

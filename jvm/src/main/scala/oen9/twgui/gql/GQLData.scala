@@ -6,7 +6,10 @@ import zio._
 object GQLData {
   case class TwitchConfig(clientId: String, token: String)
   case class StreamlinkConfig(params: String)
-  case class Config(twitch: TwitchConfig, streamlink: StreamlinkConfig)
+  case class Config(
+    twitch: TwitchConfig,
+    streamlink: ZIO[Hello.AppEnv, Nothing, StreamlinkConfig]
+  )
   case class Video(
     live: ZIO[Hello.AppEnv, Throwable, Set[LiveVideo]]
   )

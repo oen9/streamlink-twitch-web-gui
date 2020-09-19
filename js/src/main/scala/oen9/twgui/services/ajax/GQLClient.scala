@@ -5,6 +5,7 @@ import caliban.client.Operations
 import caliban.client.SelectionBuilder
 import GQLClientData._
 import oen9.twgui.services.TwitchCred
+import oen9.twgui.services.{StreamlinkConfig => StreamlinkCfg}
 import org.scalajs.dom
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -22,6 +23,11 @@ object GQLClient {
       TwitchConfig.clientId ~ TwitchConfig.token
     }.mapN(TwitchCred)
   }
+  def getStreamlinkConfigQuery = Queries.config {
+    Config.streamlink {
+      StreamlinkConfig.params
+    }.map(StreamlinkCfg)
+  }
   def getLiveVideosQuery = Queries.video {
     Video.live {
       LiveVideo.name
@@ -38,11 +44,16 @@ object GQLClient {
       VideoMut.closeStream(name)
     }
   }
+  def streamlinkConfigMutation(cfg: StreamlinkCfg) = Mutations.streamlink {
+    StreamlinkMut.config(cfg.params)
+  }
 
-  def getTwitchConfig           = runQuery(getTwitchConfigQuery)
-  def getLiveVideos             = runQuery(getLiveVideosQuery).map(_.fold(Set[String]())(_.toSet))
-  def playStream(name: String)  = runMutation(playStreamMutation(name))
-  def closeStream(name: String) = runMutation(closeStreamMutation(name))
+  def getTwitchConfig                          = runQuery(getTwitchConfigQuery)
+  def getStreamlinkConfig                      = runQuery(getStreamlinkConfigQuery)
+  def getLiveVideos                            = runQuery(getLiveVideosQuery).map(_.fold(Set[String]())(_.toSet))
+  def playStream(name: String)                 = runMutation(playStreamMutation(name))
+  def closeStream(name: String)                = runMutation(closeStreamMutation(name))
+  def saveStreamlinkConfig(cfg: StreamlinkCfg) = runMutation(streamlinkConfigMutation(cfg))
 
   private def runQuery[A](query: SelectionBuilder[Operations.RootQuery, A])       = runRequest(query.toRequest(uri))
   private def runMutation[A](query: SelectionBuilder[Operations.RootMutation, A]) = runRequest(query.toRequest(uri))

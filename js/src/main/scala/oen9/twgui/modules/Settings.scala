@@ -1,8 +1,10 @@
 package oen9.twgui.modules
 
 import oen9.twgui.services.AppCircuit
+import oen9.twgui.services.CircuitActions.SetStreamlinkConfig
 import oen9.twgui.services.CircuitActions.SetTwitchCred
 import oen9.twgui.services.ReactDiode
+import oen9.twgui.services.StreamlinkConfig
 import oen9.twgui.services.TwitchCred
 import org.scalajs.dom.{html, Event}
 import slinky.core.annotations.react
@@ -11,9 +13,6 @@ import slinky.core.facade.ReactElement
 import slinky.core.FunctionalComponent
 import slinky.core.SyntheticEvent
 import slinky.web.html._
-import oen9.twgui.services.ajax.TwitchClient
-import scala.util.Success
-import scala.util.Failure
 
 @react object Settings {
   type Props = Unit
@@ -22,36 +21,35 @@ import scala.util.Failure
     val (twitchCred, dispatch)  = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
     val (clientId, setClientId) = useState("")
     val (token, setToken)       = useState("")
+    val (streamlinkConfig, _)   = ReactDiode.useDiode(AppCircuit.zoom(_.streamlinkConfig))
+    val (params, setParams)     = useState("")
 
     useEffect(() => {
       setClientId(twitchCred.clientId)
       setToken(twitchCred.token)
-    }, Seq())
+    }, Seq(twitchCred))
 
-    def handleSave(e: SyntheticEvent[html.Form, Event]): Unit = {
+    useEffect(() => {
+      setParams(streamlinkConfig.params)
+    }, Seq(streamlinkConfig))
+
+    def handleSaveTwitchSettings(e: SyntheticEvent[html.Form, Event]): Unit = {
       e.preventDefault()
       dispatch(SetTwitchCred(TwitchCred(clientId, token)))
-
-      // TODO remove
-      //import scala.concurrent.ExecutionContext.Implicits.global
-      //val res = for {
-      //  streams <- TwitchClient.getStreams(clientId, token)
-      //  games <- TwitchClient.getGames(clientId, token, streams.data.map(_.game_id))
-      //} yield games
-
-      //res.onComplete {
-      //  case Success(value) =>  println("succ: " + value.toString())
-      //  case Failure(exception) => println("error: " + exception.toString())
-      //}
-      //println("ping")
+    }
+    def handleSaveStreamlinkSettings(e: SyntheticEvent[html.Form, Event]): Unit = {
+      e.preventDefault()
+      dispatch(SetStreamlinkConfig(StreamlinkConfig(params)))
     }
 
     def onChangeClientId(e: SyntheticEvent[html.Input, Event]): Unit = setClientId(e.target.value)
     def onChangeToken(e: SyntheticEvent[html.Input, Event]): Unit    = setToken(e.target.value)
+    def onChangeParams(e: SyntheticEvent[html.Input, Event]): Unit   = setParams(e.target.value)
 
-    def settingsForm(): ReactElement =
+    def twitchSettingsForm(): ReactElement =
       form(
-        onSubmit := (handleSave(_)),
+        onSubmit := (handleSaveTwitchSettings(_)),
+        h2(className := "mt-2", "Twitch"),
         div(
           className := "form-group",
           label(htmlFor := "clientId", "Client ID"),
@@ -81,9 +79,34 @@ import scala.util.Failure
         button(`type` := "submit", className := "btn btn-primary", "Save")
       )
 
+    def streamlinkSettingsForm(): ReactElement =
+      form(
+        onSubmit := (handleSaveStreamlinkSettings(_)),
+        h2(className := "mt-2", "Streamlink"),
+        div(
+          className := "form-group",
+          label(htmlFor := "params", "params"),
+          input(
+            `type` := "text",
+            className := "form-control",
+            id := "params",
+            aria - "describedby" := "paramsHelp",
+            value := params,
+            onChange := (onChangeParams(_))
+          ),
+          small(
+            id := "paramsHelp",
+            className := "form-text text-muted",
+            """Streamlink commandline params. e.g. for `-p "vlc"` we run `streamlink -p "vlc" twitch.tv/someone best`"""
+          )
+        ),
+        button(`type` := "submit", className := "btn btn-primary", "Save")
+      )
+
     div(
       h1("Settings"),
-      settingsForm()
+      twitchSettingsForm(),
+      streamlinkSettingsForm()
     )
   }
 }
