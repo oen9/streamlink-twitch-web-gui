@@ -29,9 +29,7 @@ import slinky.web.html._
       setToken(twitchCred.token)
     }, Seq(twitchCred))
 
-    useEffect(() => {
-      setParams(streamlinkConfig.params)
-    }, Seq(streamlinkConfig))
+    useEffect(() => setParams(streamlinkConfig.params), Seq(streamlinkConfig))
 
     def handleSaveTwitchSettings(e: SyntheticEvent[html.Form, Event]): Unit = {
       e.preventDefault()
@@ -76,7 +74,12 @@ import slinky.web.html._
           ),
           small(id := "twitchTokenHelp", className := "form-text text-muted", "twitch token")
         ),
-        button(`type` := "submit", className := "btn btn-primary", "Save")
+        button(
+          `type` := "submit",
+          className := "btn btn-primary",
+          "Save",
+          disabled := twitchCred == TwitchCred(clientId, token)
+        )
       )
 
     def streamlinkSettingsForm(): ReactElement =
@@ -100,7 +103,12 @@ import slinky.web.html._
             """Streamlink commandline params. e.g. for `-p "vlc"` we run `streamlink -p "vlc" twitch.tv/someone best`"""
           )
         ),
-        button(`type` := "submit", className := "btn btn-primary", "Save")
+        button(
+          `type` := "submit",
+          className := "btn btn-primary",
+          "Save",
+          disabled := streamlinkConfig == StreamlinkConfig(params)
+        )
       )
 
     div(
