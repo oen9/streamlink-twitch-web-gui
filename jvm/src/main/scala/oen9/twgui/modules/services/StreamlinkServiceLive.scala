@@ -14,7 +14,7 @@ class StreamlinkServiceLive(logger: Logger[String], processes: Ref[Set[Streamlin
       liveProccesses <- processes.get
       params         <- paramsRef.get
       _              <- liveProccesses.find(_.name == name).fold(unit)(_ => logAndFail(s"$name is already live"))
-      newProc        <- ZIO.effect((s"streamlink $params twitch.tv/$name best").run())
+      newProc        <- ZIO.effect((s"streamlink $params twitch.tv/$name best").run(ProcessLogger(_ => ())))
       _              <- processes.update(_ + StreamlinkProcess(name, newProc))
     } yield ()
 

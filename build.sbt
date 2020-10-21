@@ -55,7 +55,7 @@ lazy val jsSettings = Seq(
     "jquery"           -> "3.5.1"
   ),
   scalaJSUseMainModuleInitializer := true,
-  version.in(webpack) := "4.44.1",
+  version.in(webpack) := "4.44.2",
   webpackBundlingMode := BundlingMode.Application,
   webpackBundlingMode.in(fastOptJS) := BundlingMode.LibraryOnly()
 )
