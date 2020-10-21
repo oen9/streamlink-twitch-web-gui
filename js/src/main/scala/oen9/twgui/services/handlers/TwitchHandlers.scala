@@ -52,7 +52,27 @@ class GamesHandler[M](modelRW: ModelRW[M, Pot[Games]]) extends ActionHandler(mod
       val updateF = action.effect(TwitchClient.getGamesTop(action.clientId, action.token))(identity _)
       action.handleWith(this, updateF)(PotAction.handler())
 
+    case CombineGames(toCombine) =>
+      val newValue = value.map { oldGames =>
+        Games(
+          data = oldGames.data ++ toCombine.data,
+          pagination = toCombine.pagination
+        )
+      }
+      updated(newValue)
+
     case ClearGames => updated(Empty)
+  }
+}
+
+class NextGamesHandler[M](modelRW: ModelRW[M, Pot[Games]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetNextGamesTop =>
+      val updateF =
+        action.effect(TwitchClient.getTopGamesAfter(action.clientId, action.token, action.pagination))(identity _)
+      val onReady: PotAction[Games, TryGetNextGamesTop] => Action =
+        _.potResult.fold(NoAction: Action)(games => CombineGames(games))
+      action.handleWith(this, updateF)(GenericHandlers.withOnReady(onReady))
   }
 }
 

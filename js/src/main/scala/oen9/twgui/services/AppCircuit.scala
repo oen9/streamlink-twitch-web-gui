@@ -3,6 +3,7 @@ package oen9.twgui.services
 import diode.Circuit
 import diode.data.Empty
 import diode.data.Pot
+import diode.data.Ready
 import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Pagination
@@ -19,6 +20,7 @@ case class RootModel(
   streamsFollowed: Pot[StreamsFollowed] = Empty,
   streams: Pot[Streams] = Empty,
   games: Pot[Games] = Empty,
+  nextGames: Pot[Games] = Ready(Games()),
   featuredStreams: Pot[FeaturedStreams] = Empty,
   me: Pot[UserData] = Empty,
   followers: Pot[Followers] = Empty,
@@ -38,6 +40,7 @@ object AppCircuit extends Circuit[RootModel] {
     new StreamsFollowedHandler(zoomTo(_.streamsFollowed)),
     new StreamsHandler(zoomTo(_.streams)),
     new GamesHandler(zoomTo(_.games)),
+    new NextGamesHandler(zoomTo(_.nextGames)),
     new FeaturedStreamsHandler(zoomTo(_.featuredStreams)),
     new MeHandler(zoomTo(_.me)),
     new FollowedChannelsHandler(zoomTo(_.followers)),
