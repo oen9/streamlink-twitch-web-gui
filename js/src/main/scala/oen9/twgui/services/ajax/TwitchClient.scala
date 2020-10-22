@@ -32,6 +32,16 @@ object TwitchClient {
       )
       .transform(AjaxHelper.decodeAndHandleErrors[Streams])
 
+  def getStreamsAfter(clientId: String, token: String, after: String) = {
+    val queryParams = s"after=$after"
+    Ajax
+      .get(
+        url = s"$helixUrl/streams?$queryParams",
+        headers = JSON_TYPE ++ helixAuthHeader(clientId, token)
+      )
+      .transform(AjaxHelper.decodeAndHandleErrors[Streams])
+  }
+
   def getStreamsFeatured(clientId: String, token: String) =
     Ajax
       .get(

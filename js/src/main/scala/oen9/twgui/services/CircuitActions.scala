@@ -35,6 +35,12 @@ object CircuitActions {
   }
   case object ClearStreams extends Action
 
+  case class TryGetNextStreams(clientId: String, token: String, pagination: String, potResult: Pot[Streams] = Empty)
+      extends PotAction[Streams, TryGetNextStreams] {
+    def next(newResult: Pot[Streams]) = copy(potResult = newResult)
+  }
+  case class CombineStreams(streams: Streams) extends Action
+
   case class TryGetGames(clientId: String, token: String, ids: Seq[String], potResult: Pot[Games] = Empty)
       extends PotAction[Games, TryGetGames] {
     def next(newResult: Pot[Games]) = copy(potResult = newResult)

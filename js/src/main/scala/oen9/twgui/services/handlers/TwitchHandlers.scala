@@ -38,7 +38,27 @@ class StreamsHandler[M](modelRW: ModelRW[M, Pot[Streams]]) extends ActionHandler
 
       action.handleWith(this, updateF)(GenericHandlers.withOnReady(onReady))
 
+    case CombineStreams(toCombine) =>
+      val newValue = value.map { oldStreams =>
+        Streams(
+          data = oldStreams.data ++ toCombine.data,
+          pagination = toCombine.pagination
+        )
+      }
+      updated(newValue)
+
     case ClearStreams => updated(Empty)
+  }
+}
+
+class NextStreamsHandler[M](modelRW: ModelRW[M, Pot[Streams]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetNextStreams =>
+      val updateF =
+        action.effect(TwitchClient.getStreamsAfter(action.clientId, action.token, action.pagination))(identity _)
+      val onReady: PotAction[Streams, TryGetNextStreams] => Action =
+        _.potResult.fold(NoAction: Action)(streams => CombineStreams(streams))
+      action.handleWith(this, updateF)(GenericHandlers.withOnReady(onReady))
   }
 }
 

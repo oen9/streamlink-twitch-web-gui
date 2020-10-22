@@ -6,7 +6,7 @@ object TwitchData {
   case class Preview(small: String, medium: String, large: String, template: String)
   case class Channel(status: String, display_name: String, name: String)
 
-  case class Streams(data: Seq[StreamData])
+  case class Streams(data: Seq[StreamData] = Seq(), pagination: Option[Pagination] = None)
   case class StreamData(game_id: String, thumbnail_url: String, title: String, user_name: String, viewer_count: Int)
 
   case class Games(data: Seq[GameData] = Seq(), pagination: Option[Pagination] = None)
