@@ -14,7 +14,7 @@ import oen9.twgui.services.handlers._
 
 case class TwitchCred(clientId: String = "", token: String = "")
 case class StreamlinkConfig(params: String = "")
-case class Followers(total: Int, data: Seq[UserData], pagination: Option[Pagination])
+case class Followers(total: Int, data: Seq[UserData], pagination: Pagination)
 case class RootModel(
   twitchCred: TwitchCred = TwitchCred(),
   streamsFollowed: Pot[StreamsFollowed] = Empty,

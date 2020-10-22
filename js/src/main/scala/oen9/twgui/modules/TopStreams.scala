@@ -67,7 +67,7 @@ import slinky.web.html._
 
     def prettyFetchMore(): ReactElement = {
       val onClick = streams
-        .fold(none[String])(_.pagination.map(_.cursor))
+        .fold(none[String])(_.pagination.cursor)
         .map(cursor => () => fetchNextStreams(cursor))
       FetchMoreButton(nextStreams, onClick)
     }

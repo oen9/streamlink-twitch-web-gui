@@ -6,12 +6,12 @@ object TwitchData {
   case class Preview(small: String, medium: String, large: String, template: String)
   case class Channel(status: String, display_name: String, name: String)
 
-  case class Streams(data: Seq[StreamData] = Seq(), pagination: Option[Pagination] = None)
+  case class Streams(data: Seq[StreamData] = Seq(), pagination: Pagination = Pagination())
   case class StreamData(game_id: String, thumbnail_url: String, title: String, user_name: String, viewer_count: Int)
 
-  case class Games(data: Seq[GameData] = Seq(), pagination: Option[Pagination] = None)
+  case class Games(data: Seq[GameData] = Seq(), pagination: Pagination = Pagination())
   case class GameData(box_art_url: String, id: String, name: String)
-  case class Pagination(cursor: String)
+  case class Pagination(cursor: Option[String] = None)
 
   case class FeaturedStreams(featured: Seq[FeaturedS])
   case class FeaturedS(stream: FeaturedStream)
@@ -28,6 +28,6 @@ object TwitchData {
     offline_image_url: String = ""
   )
 
-  case class UsersFollows(total: Int, data: Seq[UserFollow], pagination: Option[Pagination] = None)
+  case class UsersFollows(total: Int, data: Seq[UserFollow], pagination: Pagination = Pagination())
   case class UserFollow(from_id: String, from_name: String, to_id: String, to_name: String)
 }
