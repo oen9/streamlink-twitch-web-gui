@@ -28,6 +28,6 @@ object TwitchData {
     offline_image_url: String = ""
   )
 
-  case class UsersFollows(total: Int, data: Seq[UserFollow], pagination: Pagination)
+  case class UsersFollows(total: Int, data: Seq[UserFollow], pagination: Option[Pagination] = None)
   case class UserFollow(from_id: String, from_name: String, to_id: String, to_name: String)
 }
