@@ -1,12 +1,11 @@
 package oen9.twgui.modules
 
-import diode.data.Empty
-import diode.data.Pot
+import cats.implicits._
 import diode.data.PotState.PotEmpty
 import diode.data.PotState.PotFailed
 import diode.data.PotState.PotPending
 import diode.data.PotState.PotReady
-import diode.data.Ready
+import oen9.twgui.components.FetchMoreButton
 import oen9.twgui.services.ajax.TwitchData.GameData
 import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.ClearGames
@@ -44,31 +43,12 @@ import slinky.web.html._
         img(src := game.box_art_url.replace("{width}", "285").replace("{height}", "380"), className := "card-img-top")
       )
 
-    def prettyFetchMore(): ReactElement =
-      nextGames.state match {
-        case PotPending =>
-          div(
-            className := "text-center",
-            button(
-              className := "ml-2 btn btn-primary",
-              disabled := true,
-              div(
-                className := "spinner-border text-secondary",
-                role := "status",
-                span(className := "sr-only", "Loading...")
-              )
-            )
-          )
-        case _ =>
-          games
-            .flatMap(_.pagination.fold(Empty: Pot[String])(pag => Ready(pag.cursor)))
-            .fold(div("unknown error"): ReactElement) { pagination =>
-              div(
-                className := "text-center",
-                button(className := "ml-2 btn btn-primary", "fetch more", onClick := (() => fetchNextGames(pagination)))
-              )
-            }
-      }
+    def prettyFetchMore(): ReactElement = {
+      val onClick = games
+        .fold(none[String])(_.pagination.map(_.cursor))
+        .map(cursor => () => fetchNextGames(cursor))
+      FetchMoreButton(nextGames, onClick)
+    }
 
     div(
       h1(
