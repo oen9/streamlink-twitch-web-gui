@@ -15,9 +15,15 @@ import oen9.twgui.services.handlers._
 case class TwitchCred(clientId: String = "", token: String = "")
 case class StreamlinkConfig(params: String = "")
 case class Followers(total: Int, data: Seq[UserData], pagination: Pagination)
+case class KrakenPagination(limit: Int = 5, offset: Int = 0)
+case class PaginatedStreamsFollowed(
+  streamsFollowed: StreamsFollowed = StreamsFollowed(),
+  pagination: KrakenPagination = KrakenPagination()
+)
 case class RootModel(
   twitchCred: TwitchCred = TwitchCred(),
-  streamsFollowed: Pot[StreamsFollowed] = Empty,
+  streamsFollowed: Pot[PaginatedStreamsFollowed] = Empty,
+  nextStreamsFollowed: Pot[PaginatedStreamsFollowed] = Ready(PaginatedStreamsFollowed()),
   streams: Pot[Streams] = Empty,
   nextStreams: Pot[Streams] = Ready(Streams()),
   games: Pot[Games] = Empty,
@@ -39,6 +45,7 @@ object AppCircuit extends Circuit[RootModel] {
   override protected def actionHandler: AppCircuit.HandlerFunction = composeHandlers(
     new TwitchCredHandler(zoomTo(_.twitchCred)),
     new StreamsFollowedHandler(zoomTo(_.streamsFollowed)),
+    new NextStreamsFollowedHandler(zoomTo(_.nextStreamsFollowed)),
     new StreamsHandler(zoomTo(_.streams)),
     new NextStreamsHandler(zoomTo(_.nextStreams)),
     new GamesHandler(zoomTo(_.games)),
@@ -51,4 +58,14 @@ object AppCircuit extends Circuit[RootModel] {
     new LiveVideosHandler(zoomTo(_.liveVideos)),
     new StreamlinkConfigHandler(zoomTo(_.streamlinkConfig))
   )
+}
+
+object KrakenPagination {
+  def next(oldLimit: Int, oldOffset: Int, nextSize: Int): KrakenPagination =
+    next(KrakenPagination(oldLimit, oldOffset), nextSize)
+  def next(old: KrakenPagination, nextSize: Int): KrakenPagination =
+    KrakenPagination(
+      limit = if (nextSize < old.limit) 0 else old.limit,
+      offset = old.offset + old.limit
+    )
 }

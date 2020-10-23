@@ -1,16 +1,21 @@
 package oen9.twgui.modules
 
+import cats.implicits._
 import diode.data.PotState.PotEmpty
 import diode.data.PotState.PotFailed
 import diode.data.PotState.PotPending
 import diode.data.PotState.PotReady
+import oen9.twgui.components.FetchMoreButton
 import oen9.twgui.services.ajax.TwitchData.StreamFollowed
 import oen9.twgui.services.AppCircuit
 import oen9.twgui.services.CircuitActions.ClearStreamsFollowed
+import oen9.twgui.services.CircuitActions.TryGetNextStreamsFollowed
 import oen9.twgui.services.CircuitActions.TryGetStreamsFollowed
 import oen9.twgui.services.CircuitActions.TryPlayStream
+import oen9.twgui.services.KrakenPagination
 import oen9.twgui.services.ReactDiode
 import slinky.core.annotations.react
+import slinky.core.facade.Fragment
 import slinky.core.facade.Hooks._
 import slinky.core.facade.ReactElement
 import slinky.core.FunctionalComponent
@@ -21,6 +26,7 @@ import slinky.web.html._
 
   val component = FunctionalComponent[Props] { _ =>
     val (streamsFollowed, dispatch) = ReactDiode.useDiode(AppCircuit.zoom(_.streamsFollowed))
+    val (nextStreamsFollowed, _)    = ReactDiode.useDiode(AppCircuit.zoom(_.nextStreamsFollowed))
     val (twitchCred, _)             = ReactDiode.useDiode(AppCircuit.zoom(_.twitchCred))
 
     useEffect(() => {
@@ -30,6 +36,15 @@ import slinky.web.html._
 
     def refreshData(): Unit            = dispatch(TryGetStreamsFollowed(twitchCred.clientId, twitchCred.token))
     def playStream(name: String): Unit = dispatch(TryPlayStream(name))
+    def fetchNextStreams(limit: Int, offset: Int): Unit =
+      dispatch(
+        TryGetNextStreamsFollowed(
+          clientId = twitchCred.clientId,
+          token = twitchCred.token,
+          limit = limit,
+          offset = offset
+        )
+      )
 
     def prettyStreamFollowed(sf: StreamFollowed) =
       div(
@@ -47,6 +62,16 @@ import slinky.web.html._
           button(className := "btn btn-primary", "play", onClick := (() => playStream(sf.channel.name)))
         )
       )
+
+    def prettyFetchMore(): ReactElement = {
+      val onClick = streamsFollowed
+        .fold(none[KrakenPagination]) { psf =>
+          if (psf.pagination.limit == 0) none
+          else psf.pagination.some
+        }
+        .map(pag => () => fetchNextStreams(pag.limit, pag.offset))
+      FetchMoreButton(nextStreamsFollowed, onClick)
+    }
 
     div(
       h1(
@@ -67,7 +92,10 @@ import slinky.web.html._
             streamsFollowed.exceptionOption.fold("unknown error")(msg => " error: " + msg.getMessage())
           case PotReady =>
             streamsFollowed.fold(div("unknown error"): ReactElement) { ssf =>
-              div(className := "card-deck", ssf.streams.map(prettyStreamFollowed))
+              Fragment(
+                div(className := "card-deck", ssf.streamsFollowed.streams.map(prettyStreamFollowed)),
+                prettyFetchMore()
+              )
             }
           case _ => div()
         }

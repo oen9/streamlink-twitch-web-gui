@@ -15,15 +15,59 @@ import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.ajax.TwitchData.UserData
 import oen9.twgui.services.CircuitActions._
 import oen9.twgui.services.Followers
+import oen9.twgui.services.KrakenPagination
+import oen9.twgui.services.PaginatedStreamsFollowed
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class StreamsFollowedHandler[M](modelRW: ModelRW[M, Pot[StreamsFollowed]]) extends ActionHandler(modelRW) {
+class StreamsFollowedHandler[M](modelRW: ModelRW[M, Pot[PaginatedStreamsFollowed]]) extends ActionHandler(modelRW) {
+  def nextKrakenPag(old: KrakenPagination, nextSfStreamSize: Int): KrakenPagination =
+    KrakenPagination(
+      limit = if (nextSfStreamSize < old.limit) 0 else old.limit,
+      offset = old.offset + old.limit
+    )
+
   override def handle = {
     case action: TryGetStreamsFollowed =>
-      val updateF = action.effect(TwitchClient.getStreamsFollowed(action.clientId, action.token))(identity _)
+      val defaultParams = KrakenPagination()
+      val updateF = action.effect(
+        TwitchClient.getStreamsFollowed(
+          action.clientId,
+          action.token,
+          defaultParams.limit,
+          defaultParams.offset
+        )
+      )(sf => PaginatedStreamsFollowed(sf, KrakenPagination.next(defaultParams, sf.streams.size)))
       action.handleWith(this, updateF)(PotAction.handler())
 
+    case CombineStreamsFollowed(toCombine) =>
+      val newValue = value.map { old =>
+        PaginatedStreamsFollowed(
+          streamsFollowed = StreamsFollowed(old.streamsFollowed.streams ++ toCombine.streamsFollowed.streams),
+          pagination = toCombine.pagination
+        )
+      }
+      updated(newValue)
+
     case ClearStreamsFollowed => updated(Empty)
+  }
+}
+
+class NextStreamsFollowedHandler[M](modelRW: ModelRW[M, Pot[PaginatedStreamsFollowed]]) extends ActionHandler(modelRW) {
+  override def handle = {
+    case action: TryGetNextStreamsFollowed =>
+      val updateF = action.effect(
+        TwitchClient.getStreamsFollowed(action.clientId, action.token, action.limit, action.offset)
+      )(nextSf =>
+        value.fold(PaginatedStreamsFollowed()) { oldSf =>
+          PaginatedStreamsFollowed(
+            streamsFollowed = StreamsFollowed(nextSf.streams),
+            pagination = KrakenPagination.next(action.limit, action.offset, nextSf.streams.size)
+          )
+        }
+      )
+      val onReady: PotAction[PaginatedStreamsFollowed, TryGetNextStreamsFollowed] => Action =
+        _.potResult.fold(NoAction: Action)(psf => CombineStreamsFollowed(psf))
+      action.handleWith(this, updateF)(GenericHandlers.withOnReady(onReady))
   }
 }
 

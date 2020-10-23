@@ -7,7 +7,6 @@ import diode.data.PotAction
 import oen9.twgui.services.ajax.TwitchData.FeaturedStreams
 import oen9.twgui.services.ajax.TwitchData.Games
 import oen9.twgui.services.ajax.TwitchData.Streams
-import oen9.twgui.services.ajax.TwitchData.StreamsFollowed
 import oen9.twgui.services.ajax.TwitchData.UserData
 
 object CircuitActions {
@@ -23,11 +22,17 @@ object CircuitActions {
     def next(newResult: Pot[UserData]) = copy(potResult = newResult)
   }
 
-  case class TryGetStreamsFollowed(clientId: String, token: String, potResult: Pot[StreamsFollowed] = Empty)
-      extends PotAction[StreamsFollowed, TryGetStreamsFollowed] {
-    def next(newResult: Pot[StreamsFollowed]) = copy(potResult = newResult)
+  case class TryGetStreamsFollowed(clientId: String, token: String, potResult: Pot[PaginatedStreamsFollowed] = Empty)
+      extends PotAction[PaginatedStreamsFollowed, TryGetStreamsFollowed] {
+    def next(newResult: Pot[PaginatedStreamsFollowed]) = copy(potResult = newResult)
   }
   case object ClearStreamsFollowed extends Action
+
+  case class TryGetNextStreamsFollowed(clientId: String, token: String, limit: Int, offset: Int, potResult: Pot[PaginatedStreamsFollowed] = Empty)
+      extends PotAction[PaginatedStreamsFollowed, TryGetNextStreamsFollowed] {
+    def next(newResult: Pot[PaginatedStreamsFollowed]) = copy(potResult = newResult)
+  }
+  case class CombineStreamsFollowed(paginatedStreamsFollowed: PaginatedStreamsFollowed) extends Action
 
   case class TryGetStreams(clientId: String, token: String, potResult: Pot[Streams] = Empty)
       extends PotAction[Streams, TryGetStreams] {

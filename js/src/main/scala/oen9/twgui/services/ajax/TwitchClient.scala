@@ -16,13 +16,15 @@ object TwitchClient {
   private[this] val krakenUrl = s"$baseUrl/kraken"
   private[this] val helixUrl  = s"$baseUrl/helix"
 
-  def getStreamsFollowed(clientId: String, token: String) =
+  def getStreamsFollowed(clientId: String, token: String, limit: Int, offset: Int) = {
+    val queryParams = s"limit=$limit&offset=$offset"
     Ajax
       .get(
-        url = s"$krakenUrl/streams/followed",
+        url = s"$krakenUrl/streams/followed?$queryParams",
         headers = JSON_TYPE ++ krakenAuthHeader(clientId, token)
       )
       .transform(AjaxHelper.decodeAndHandleErrors[StreamsFollowed])
+  }
 
   def getStreams(clientId: String, token: String) =
     Ajax
